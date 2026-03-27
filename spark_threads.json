@@ -2,41 +2,57 @@
   "Aryan Srivastava": {
     "ts": "1774443787.332629",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0ALNSUTAT1"
+    "ext_channel": "C0ALNSUTAT1",
+    "email": "aryan.srivastava@placeholder.com",
+    "keywords": ["aryan"]
   },
   "Rahul Kumar": {
     "ts": "1774444173.870409",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0AMY82338Q"
+    "ext_channel": "C0AMY82338Q",
+    "email": "rahul.kumar@placeholder.com",
+    "keywords": ["rahul"]
   },
   "Daniel Nurieli": {
     "ts": "1774444673.143179",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0AM48WMYKC"
+    "ext_channel": "C0AM48WMYKC",
+    "email": "daniel.nurieli@placeholder.com",
+    "keywords": ["daniel"]
   },
   "Samuel Margolis": {
     "ts": "1774445063.119779",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0AMH3A0CCR"
+    "ext_channel": "C0AMH3A0CCR",
+    "email": "samuel.margolis@placeholder.com",
+    "keywords": ["samuel", "sam"]
   },
   "Adedoyin & Chris": {
     "ts": "1774445228.793609",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0AM43YQCM8"
+    "ext_channel": "C0AM43YQCM8",
+    "email": "adedoyin@placeholder.com",
+    "keywords": ["adedoyin", "chris"]
   },
   "Anmol Narula": {
     "ts": "1774445477.857399",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0AMH7A9QM7"
+    "ext_channel": "C0AMH7A9QM7",
+    "email": "anmol.narula@placeholder.com",
+    "keywords": ["anmol"]
   },
   "Isabelle Gan": {
     "ts": "1774445731.427099",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0AMH8ADJUR"
+    "ext_channel": "C0AMH8ADJUR",
+    "email": "isabelle.gan@placeholder.com",
+    "keywords": ["isabelle"]
   },
   "Onkar Singh Gujral": {
     "ts": "1774446126.904409",
     "channel": "C0A3P3Z55GQ",
-    "ext_channel": "C0AM7FHDC5A"
+    "ext_channel": "C0AM7FHDC5A",
+    "email": "onkar.gujral@placeholder.com",
+    "keywords": ["onkar"]
   }
 }

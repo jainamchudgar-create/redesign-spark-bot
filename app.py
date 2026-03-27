@@ -10,6 +10,7 @@ from config import EVALUATORS, PROGRAM_WEEKS, RUBRIC
 from db import has_submitted, init_db
 from ext_summary import run_ext_summaries
 from weekly_update import post_weekly_update
+from calendar_walker import check_calendars
 from scheduler import start_scheduler
 
 load_dotenv()
@@ -97,6 +98,7 @@ if __name__ == "__main__":
         post_reminder_fn=post_weekly_reminder,
         post_ext_summaries_fn=run_ext_summaries,
         post_weekly_update_fn=post_weekly_update,
+        check_calendars_fn=check_calendars,
         get_week_fn=get_current_week,
     )
 

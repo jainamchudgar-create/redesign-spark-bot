@@ -31,6 +31,31 @@ def init_db():
         cur = conn.cursor()
         if DATABASE_URL:
             cur.execute("""
+                CREATE TABLE IF NOT EXISTS nudges (
+                    id SERIAL PRIMARY KEY,
+                    event_id TEXT NOT NULL,
+                    spark_name TEXT NOT NULL,
+                    nudged_at TEXT NOT NULL,
+                    UNIQUE (event_id, spark_name)
+                )
+            """)
+        else:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS nudges (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    event_id TEXT NOT NULL,
+                    spark_name TEXT NOT NULL,
+                    nudged_at TEXT NOT NULL
+                )
+            """)
+            cur.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_nudges_unique
+                ON nudges(event_id, spark_name)
+            """)
+        conn.commit()
+
+        if DATABASE_URL:
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS feedback (
                     id SERIAL PRIMARY KEY,
                     week INTEGER NOT NULL,
@@ -136,3 +161,31 @@ def has_submitted(week, spark_name, evaluator_key):
             (week, spark_name, evaluator_key),
         )
         return cur.fetchone() is not None
+
+
+def has_nudged(event_id, spark_name):
+    """Check if we already sent a post-call nudge for this event + spark."""
+    with _conn() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            f"SELECT id FROM nudges WHERE event_id={PH} AND spark_name={PH}",
+            (event_id, spark_name),
+        )
+        return cur.fetchone() is not None
+
+
+def record_nudge(event_id, spark_name):
+    """Record that a nudge was sent for this event + spark."""
+    with _conn() as conn:
+        cur = conn.cursor()
+        if DATABASE_URL:
+            cur.execute(
+                f"INSERT INTO nudges (event_id, spark_name, nudged_at) VALUES ({PH},{PH},{PH}) ON CONFLICT DO NOTHING",
+                (event_id, spark_name, datetime.utcnow().isoformat()),
+            )
+        else:
+            cur.execute(
+                f"INSERT OR IGNORE INTO nudges (event_id, spark_name, nudged_at) VALUES ({PH},{PH},{PH})",
+                (event_id, spark_name, datetime.utcnow().isoformat()),
+            )
+        conn.commit()
