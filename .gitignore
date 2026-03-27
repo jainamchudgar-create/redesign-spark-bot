@@ -8,3 +8,5 @@ spark_feedback.db
 sparkbot.log
 generate_avatar.py
 test_akash.py
+set_railway_vars.sh
+sparkbot_avatar.png
