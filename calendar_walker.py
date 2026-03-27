@@ -73,9 +73,12 @@ def _event_matches_spark(event, spark_info, spark_name):
             return True
 
     # Check attendees
+    spark_email_secondary = spark_info.get("email_secondary", "").lower()
     for attendee in event.get("attendees", []):
         email = attendee.get("email", "").lower()
         if spark_email and email == spark_email:
+            return True
+        if spark_email_secondary and email == spark_email_secondary:
             return True
 
     return False
@@ -118,7 +121,7 @@ def _post_nudge(spark_name, spark_info, mentor_user_ids, event_summary):
 def check_calendars():
     """
     Main polling function — called every 10 minutes by the scheduler.
-    Checks all CV mentor calendars for recently ended Spark calls.
+    Checks all mentor calendars for recently ended Spark calls.
     """
     impersonate_user = os.getenv("GOOGLE_IMPERSONATE_USER")
     if not impersonate_user:
@@ -128,16 +131,15 @@ def check_calendars():
     sparks = _load_sparks()
     now = datetime.now(timezone.utc)
 
-    # Group CV mentors by their assigned sparks
-    cv_mentors = {
+    # All mentors with a real email (any section)
+    all_mentors = {
         key: ev for key, ev in EVALUATORS.items()
-        if ev["section"] == "concept_vision"
+        if "email" in ev
         and not ev.get("email", "").startswith("PLACEHOLDER")
-        and "email" in ev
     }
 
-    # For each CV mentor, check their calendar
-    for ev_key, ev in cv_mentors.items():
+    # For each mentor, check their calendar
+    for ev_key, ev in all_mentors.items():
         mentor_email = ev["email"]
         try:
             service = _get_calendar_service(mentor_email)
@@ -175,7 +177,7 @@ def check_calendars():
                 }
                 mentor_user_ids = [
                     m["slack_user_id"]
-                    for m in cv_mentors.values()
+                    for m in all_mentors.values()
                     if m["email"].lower() in attendee_emails
                     and spark_name in m["assigned_sparks"]
                 ] or [ev["slack_user_id"]]  # fallback to just this mentor
