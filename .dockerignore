@@ -1,0 +1,14 @@
+.env
+venv/
+__pycache__/
+*.pyc
+*.pyo
+credentials.json
+spark_feedback.db
+sparkbot.log
+*.png
+Procfile
+set_railway_vars.sh
+test_akash.py
+generate_avatar.py
+README.md

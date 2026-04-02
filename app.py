@@ -1,6 +1,8 @@
 import json
 import os
+import threading
 from datetime import date
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from dotenv import load_dotenv
 from slack_bolt import App
@@ -89,9 +91,34 @@ def post_weekly_reminder():
             print(f"[reminder] Error posting to {spark_name} thread: {e}")
 
 
+# ── Health server ─────────────────────────────────────────────────────────────
+
+class _HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/health":
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"ok")
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def log_message(self, format, *args):
+        pass  # silence access logs
+
+
+def _start_health_server():
+    port = int(os.environ.get("PORT", "8080"))
+    server = HTTPServer(("0.0.0.0", port), _HealthHandler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    print(f"Health server listening on port {port}")
+
+
 # ── Entrypoint ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
+    _start_health_server()
     init_db()
 
     start_scheduler(
