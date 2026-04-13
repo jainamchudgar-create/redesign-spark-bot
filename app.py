@@ -11,7 +11,7 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 from config import EVALUATORS, PROGRAM_WEEKS, RUBRIC
-from db import has_submitted, init_db
+from db import has_nudged, has_submitted, init_db, record_nudge
 from ext_summary import run_ext_summaries
 from weekly_update import post_weekly_update
 from calendar_walker import check_calendars
@@ -84,6 +84,11 @@ def post_weekly_reminder():
             logger.info("reminder: %s — all feedback submitted, skipping", spark_name)
             continue
 
+        nudge_key = f"weekly_reminder_w{week}"
+        if has_nudged(nudge_key, spark_name):
+            logger.info("reminder: %s week %d already sent, skipping", spark_name, week)
+            continue
+
         tags = " ".join(f"<@{uid}>" for uid in missing)
         text = (
             f":bell: *Week {week} feedback reminder* — {tags} we're still waiting on "
@@ -96,6 +101,7 @@ def post_weekly_reminder():
                 thread_ts=info["ts"],
                 text=text,
             )
+            record_nudge(nudge_key, spark_name)
             logger.info("reminder: posted in %s thread (%d missing)", spark_name, len(missing))
         except Exception as e:
             logger.error("reminder: error posting to %s thread: %s", spark_name, e)

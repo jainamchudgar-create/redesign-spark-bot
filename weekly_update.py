@@ -10,6 +10,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 from config import ALL_SPARKS, EVALUATORS
+from db import has_nudged, record_nudge
 from slack_client import get_thread_replies, post_message
 
 THREADS_FILE = os.path.join(os.path.dirname(__file__), "spark_threads.json")
@@ -137,10 +138,16 @@ def build_weekly_update(week):
 
 def post_weekly_update(week):
     """Generate and post the weekly status update to the main channel."""
+    nudge_key = f"weekly_update_w{week}"
+    if has_nudged(nudge_key, "main_channel"):
+        logger.info("Weekly update for week %d already posted, skipping.", week)
+        return
+
     logger.info("Building Week %d status update...", week)
     text = build_weekly_update(week)
     result = post_message(SUMMARY_CHANNEL, text)
     if result.get("ok"):
+        record_nudge(nudge_key, "main_channel")
         logger.info("Posted Week %d status update.", week)
     else:
         logger.error("Failed to post Week %d status update: %s", week, result.get("error"))
